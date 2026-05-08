@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Extrapolar Perfiles de Horneo</title>
+<title>Extrapolar Perfiles de Horneo - Newton</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -18,6 +18,7 @@
     --green: #3fb950;
     --red: #f85149;
     --input-bg: #0d1117;
+    --blue: #58a6ff;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +34,6 @@
     padding: 24px 16px;
   }
 
-  /* HEADER */
   .header {
     width: 100%;
     max-width: 960px;
@@ -67,7 +67,6 @@
     font-family: 'Share Tech Mono', monospace;
   }
 
-  /* MAIN CARD */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -99,7 +98,6 @@
     border-radius: 2px;
   }
 
-  /* CONFIG ROW */
   .config-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -111,6 +109,7 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
+    position: relative;
   }
 
   .config-panel-title {
@@ -129,13 +128,10 @@
     margin-bottom: 12px;
   }
 
-  .form-row:last-child { margin-bottom: 0; }
-
   label {
     font-size: 0.8rem;
     color: var(--text-muted);
     font-weight: 500;
-    letter-spacing: 0.02em;
   }
 
   input[type="number"] {
@@ -147,29 +143,38 @@
     font-size: 0.9rem;
     padding: 7px 10px;
     width: 100%;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: textfield;
     outline: none;
     transition: border-color 0.2s;
-  }
-
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
   }
 
   input[type="number"]:focus {
     border-color: var(--accent);
   }
 
-  input[type="number"].invalid {
-    border-color: var(--red);
-    background: rgba(248,81,73,0.06);
+  .newton-box {
+    background: rgba(88, 166, 255, 0.05);
+    border: 1px solid var(--blue);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 16px;
+  }
+  
+  .newton-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
   }
 
-  /* CHECKBOX MASA */
+  .newton-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
   .checkbox-row {
     display: flex;
     align-items: center;
@@ -185,33 +190,16 @@
   }
 
   .checkbox-row:hover { border-color: var(--accent); }
-
-  .checkbox-row input[type="checkbox"] {
-    width: 16px; height: 16px;
-    accent-color: var(--accent);
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  .checkbox-row span {
-    font-size: 0.82rem;
-    color: var(--text);
-    font-weight: 500;
-  }
+  .checkbox-row.newton-active { border-color: var(--blue); }
 
   .masa-inputs {
     display: none;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 12px;
-    animation: fadeIn 0.2s ease;
   }
-
   .masa-inputs.visible { display: grid; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ZONAS GRID */
   .zonas-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -227,33 +215,50 @@
   }
 
   .zona-row {
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 60px 1fr 1fr;
+    align-items: start;
     gap: 10px;
-    margin-bottom: 8px;
-    animation: fadeIn 0.15s ease;
+    margin-bottom: 16px;
   }
 
   .zona-label {
     font-size: 0.78rem;
     color: var(--text-muted);
-    width: 60px;
-    flex-shrink: 0;
     font-family: 'Share Tech Mono', monospace;
+    padding-top: 24px;
   }
 
-  .zona-input {
-    flex: 1;
+  .zona-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 65px;
+  }
+
+  .sub-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    line-height: 1.2;
+    height: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  .zona-result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 
   .zona-result {
     font-family: 'Share Tech Mono', monospace;
     font-size: 0.9rem;
     color: var(--green);
-    width: 90px;
     text-align: right;
-    flex-shrink: 0;
-    min-height: 32px;
+    min-height: 38px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -261,7 +266,15 @@
     border: 1px solid rgba(63,185,80,0.2);
     border-radius: 6px;
     padding: 0 8px;
-    transition: all 0.3s;
+  }
+
+  .k-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--blue);
+    text-align: right;
+    padding-right: 4px;
+    height: 12px;
   }
 
   .zona-result.empty {
@@ -270,7 +283,6 @@
     color: var(--text-muted);
   }
 
-  /* BUTTONS */
   .buttons-row {
     display: flex;
     gap: 10px;
@@ -291,29 +303,11 @@
     transition: all 0.2s;
   }
 
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary.newton-btn { background: var(--blue); }
+  .btn-danger { background: rgba(248,81,73,0.1); color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red); color: white; }
 
-  .btn-primary:hover {
-    background: var(--accent2);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(249,115,22,0.4);
-  }
-
-  .btn-secondary {
-    background: var(--surface2);
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--text-muted);
-    background: var(--border);
-  }
-
-  /* ALERT */
   .alert {
     display: none;
     background: rgba(248,81,73,0.12);
@@ -323,30 +317,8 @@
     font-size: 0.85rem;
     color: var(--red);
     margin-top: 12px;
-    animation: fadeIn 0.2s ease;
   }
-
   .alert.visible { display: block; }
-
-  /* FACTOR TAG */
-  .factor-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.75rem;
-    background: rgba(249,115,22,0.1);
-    border: 1px solid rgba(249,115,22,0.3);
-    color: var(--accent);
-    padding: 4px 10px;
-    border-radius: 20px;
-    margin-top: 8px;
-  }
-
-  @media (max-width: 640px) {
-    .config-grid, .zonas-wrapper { grid-template-columns: 1fr; }
-    .masa-inputs { grid-template-columns: 1fr; }
-  }
 </style>
 </head>
 <body>
@@ -354,248 +326,286 @@
 <div class="header">
   <div class="header-icon">🔥</div>
   <div>
-    <h1>Extrapolar Perfiles de Horneo</h1>
-    <p>Temperaturas por zona · Interpolación por solapamiento</p>
+    <h1>Calculadora de Perfiles de Horneo</h1>
+    <p>Interpolación Estándar & Ley de Enfriamiento de Newton</p>
   </div>
 </div>
 
-<!-- CONFIG CARD -->
 <div class="card">
-  <div class="card-title">Configuración</div>
+  <div class="card-title">Configuración Global</div>
 
   <div class="config-grid">
-    <!-- Perfil de Referencia -->
     <div class="config-panel">
       <div class="config-panel-title">Perfil de Referencia</div>
       <div class="form-row">
         <label>Tiempo de horneo (s)</label>
-        <input type="number" id="tiempo1" placeholder="Ej: 205" min="0" step="0.1" oninput="soloDecimal(this)">
+        <input type="number" id="tiempo1" placeholder="Ej: 204" min="0" step="0.1">
       </div>
-      <div class="form-row">
+      <div class="form-row" id="zonas1Row">
         <label>Número de zonas (1–10)</label>
-        <input type="number" id="zonas1" placeholder="Ej: 5" min="1" max="10" step="1" oninput="soloEntero(this); actualizarZonas()">
+        <input type="number" id="zonas1" placeholder="Ej: 5" min="1" max="10" step="1" oninput="actualizarZonas()">
       </div>
     </div>
 
-    <!-- Nuevo Perfil -->
-    <div class="config-panel">
+    <div class="config-panel" id="panelNuevo">
       <div class="config-panel-title">Nuevo Perfil</div>
       <div class="form-row">
         <label>Tiempo de horneo (s)</label>
-        <input type="number" id="tiempo2" placeholder="Ej: 205" min="0" step="0.1" oninput="soloDecimal(this)">
+        <input type="number" id="tiempo2" placeholder="Ej: 180" min="0" step="0.1">
       </div>
-      <div class="form-row">
+      <div class="form-row" id="zonas2Row">
         <label>Número de zonas (1–10)</label>
-        <input type="number" id="zonas2" placeholder="Ej: 5" min="1" max="10" step="1" oninput="soloEntero(this); actualizarZonas()">
+        <input type="number" id="zonas2" placeholder="Ej: 5" min="1" max="10" step="1" oninput="actualizarZonas()">
       </div>
     </div>
   </div>
 
-  <!-- Masa -->
-  <div style="margin-top:16px;">
-    <label class="checkbox-row" for="checkMasa">
-      <input type="checkbox" id="checkMasa" onchange="toggleMasa()">
-      <span>Incluir flujo másico (kg/h)</span>
+  <div style="margin-top:20px;">
+    <label class="checkbox-row" id="newtonLabel" for="checkNewton">
+      <input type="checkbox" id="checkNewton" onchange="toggleNewton()">
+      <span style="font-weight: 700;">Habilitar Modo Newton</span>
     </label>
-    <div class="masa-inputs" id="masaInputs">
-      <div class="form-row">
-        <label>Flujo másico — Horno 1 (kg/h)</label>
-        <input type="number" id="masa1" min="0.01" step="0.01" placeholder="Ej: 120.5">
-      </div>
-      <div class="form-row">
-        <label>Flujo másico — Horno 2 (kg/h)</label>
-        <input type="number" id="masa2" min="0.01" step="0.01" placeholder="Ej: 95.0">
+
+    <div id="newtonInitialTemp" class="form-row" style="display:none; padding: 0 10px 12px 10px;">
+        <label style="color: var(--blue);">Temperatura inicial del producto [°C]</label>
+        <input type="number" id="tempInicialProd" placeholder="Ej: 25" step="0.1">
+    </div>
+
+    <div id="newtonInfo" class="newton-box" style="display:none;">
+      <div class="newton-header"><span>ℹ️</span> INFO MODO NEWTON</div>
+      <div class="newton-desc" id="newtonDescText">
+        El Modo Newton asume que la transferencia de calor entre el horno y el producto es constante y ya está optimizada. En este modo, el sistema utiliza un valor fijo (la constante de proporcionalidad K) que representa la 'eficiencia térmica' actual de la línea. Por lo que no permite cambios en el flujo másico, numero de zonas o tipo de horno. Su uso se recomienda solo para cambios en el tiempo de horneado que repondan de forma proporcional a los cambios en el flujo másico derivados de cambios en la velocidad del formado [rpm/gpm].
       </div>
     </div>
-  </div>
 
-  <div id="factorTag" class="factor-tag" style="display:none;">
-    <span>⚡</span><span id="factorVal">Factor = —</span>
+    <div id="masaToggleContainer">
+        <label class="checkbox-row" for="checkMasa">
+          <input type="checkbox" id="checkMasa" onchange="toggleMasa()">
+          <span>Incluir flujo másico (kg/h)</span>
+        </label>
+        <div class="masa-inputs" id="masaInputs">
+          <div class="form-row">
+            <label>Horno 1 (kg/h)</label>
+            <input type="number" id="masa1" min="0.01" step="0.01" placeholder="Ej: 450">
+          </div>
+          <div class="form-row">
+            <label>Horno 2 (kg/h)</label>
+            <input type="number" id="masa2" min="0.01" step="0.01" placeholder="Ej: 480">
+          </div>
+        </div>
+    </div>
   </div>
   <div class="alert" id="alertMsg"></div>
 </div>
 
-<!-- ZONAS CARD -->
 <div class="card">
-  <div class="card-title">Temperaturas por Zona</div>
+  <div class="card-title">Datos de Zonas y Temperaturas</div>
   <div class="zonas-wrapper">
-    <!-- Input zonas -->
     <div class="zonas-panel">
-      <div class="config-panel-title">Perfil de Referencia — Entrada (°C)</div>
+      <div class="config-panel-title">Entradas - Referencia</div>
       <div id="zonasEntrada"></div>
     </div>
-    <!-- Output zonas -->
     <div class="zonas-panel">
-      <div class="config-panel-title">Nuevo Perfil — Resultado (°C)</div>
+      <div class="config-panel-title">Resultados - Recomendado</div>
       <div id="zonasSalida"></div>
     </div>
   </div>
 
   <div class="buttons-row">
-    <button class="btn btn-secondary" onclick="borrarTodo()">Borrar todo</button>
-    <button class="btn btn-primary" onclick="calcular()">🔥 Calcular Perfil</button>
+    <button class="btn btn-danger" onclick="borrarTodo()">Borrar Todo</button>
+    <button class="btn btn-primary" id="btnCalcular" onclick="calcular()">🔥 Calcular Perfil</button>
   </div>
 </div>
 
 <script>
-// ─── INIT ────────────────────────────────────────────────────────────────────
 const sel = id => document.getElementById(id);
+let historialValores = {}; 
 
-// Permitir solo decimales positivos (bloquea e, +, -)
-function soloDecimal(el) {
-  el.value = el.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+function getGaussPlaceholder(i, total, minVal, maxVal) {
+    if (total === 1) return maxVal;
+    const center = (total + 1) / 2;
+    const sigma = total / 3; 
+    const val = minVal + (maxVal - minVal) * Math.exp(-Math.pow(i - center, 2) / (2 * Math.pow(sigma, 2)));
+    return Math.round(val);
 }
 
-// Permitir solo enteros 1-10
-function soloEntero(el) {
-  el.value = el.value.replace(/[^0-9]/g, '');
-  if (parseInt(el.value) > 10) el.value = 10;
-  if (parseInt(el.value) < 1 && el.value !== '') el.value = 1;
+function getProdPlaceholder(i, total, startVal, endVal) {
+    const progress = i / total;
+    const val = startVal + (endVal - startVal) * (1 - Math.exp(-3 * progress)) / (1 - Math.exp(-3));
+    return Math.round(val);
 }
 
-// Bloquear teclas no numéricas en inputs decimales
-document.addEventListener('keydown', function(e) {
-  const el = e.target;
-  if (el.tagName !== 'INPUT' || el.type !== 'number') return;
-  if (['e','E','+','-'].includes(e.key)) e.preventDefault();
-});
+window.onload = () => {
+    actualizarZonas();
+};
 
-// Valores por defecto
-sel('tiempo1').value = 205;
-sel('tiempo2').value = 205;
-sel('zonas1').value  = 5;
-sel('zonas2').value  = 5;
+function guardarInput(id, val) {
+    historialValores[id] = val;
+}
 
-actualizarZonas();
-
-// ─── ZONAS ───────────────────────────────────────────────────────────────────
 function actualizarZonas() {
-  const N = parseInt(sel('zonas1').value) || 0;
-  const M = parseInt(sel('zonas2').value) || 0;
-  if (N < 1 || N > 10 || M < 1 || M > 10) return;
+    const N = parseInt(sel('zonas1').value) || 5;
+    const M = parseInt(sel('zonas2').value) || 5;
+    const esNewton = sel('checkNewton').checked;
+    const effectiveM = esNewton ? N : M;
+    if (esNewton) sel('zonas2').value = N;
 
-  // Entrada
-  const entDiv = sel('zonasEntrada');
-  entDiv.innerHTML = '';
-  for (let i = 1; i <= N; i++) {
-    entDiv.innerHTML += `
-      <div class="zona-row">
-        <span class="zona-label">Zona ${i}</span>
-        <input type="number" class="zona-input" id="tempIn${i}" placeholder="Ej: 200" min="0" step="0.1" oninput="soloDecimal(this)">
-      </div>`;
-  }
-
-  // Salida
-  const salDiv = sel('zonasSalida');
-  salDiv.innerHTML = '';
-  for (let j = 1; j <= M; j++) {
-    salDiv.innerHTML += `
-      <div class="zona-row">
-        <span class="zona-label">Zona ${j}</span>
-        <div class="zona-result empty" id="tempOut${j}">—</div>
-      </div>`;
-  }
-}
-
-// ─── MASA TOGGLE ─────────────────────────────────────────────────────────────
-function toggleMasa() {
-  const v = sel('checkMasa').checked;
-  sel('masaInputs').classList.toggle('visible', v);
-  if (!v) {
-    sel('masa1').value = '';
-    sel('masa2').value = '';
-  }
-}
-
-// ─── SOLAPAMIENTO ────────────────────────────────────────────────────────────
-function calcularSolapamiento(i, j, N, M) {
-  const ini_i = (i - 1) / N, fin_i = i / N;
-  const ini_j = (j - 1) / M, fin_j = j / M;
-  const solape = Math.max(0, Math.min(fin_j, fin_i) - Math.max(ini_j, ini_i));
-  return solape / (1 / M);
-}
-
-// ─── CALCULAR ────────────────────────────────────────────────────────────────
-function calcular() {
-  const alertEl = sel('alertMsg');
-  alertEl.classList.remove('visible');
-
-  const T1 = parseFloat(sel('tiempo1').value);
-  const T2 = parseFloat(sel('tiempo2').value);
-  const N  = parseInt(sel('zonas1').value);
-  const M  = parseInt(sel('zonas2').value);
-
-  if (isNaN(T1) || T1 <= 0) { mostrarAlerta('Ingresa el tiempo de horneo del Perfil de Referencia.'); return; }
-  if (isNaN(T2) || T2 <= 0) { mostrarAlerta('Ingresa el tiempo de horneo del Nuevo Perfil.'); return; }
-  if (isNaN(N)  || N < 1 || N > 10) { mostrarAlerta('El número de zonas del Perfil de Referencia debe ser entre 1 y 10.'); return; }
-  if (isNaN(M)  || M < 1 || M > 10) { mostrarAlerta('El número de zonas del Nuevo Perfil debe ser entre 1 y 10.'); return; }
-
-  let factor;
-  const usaMasa = sel('checkMasa').checked;
-
-  if (usaMasa) {
-    const m1 = parseFloat(sel('masa1').value);
-    const m2 = parseFloat(sel('masa2').value);
-    if (!m1 || !m2 || isNaN(m1) || isNaN(m2) || m1 <= 0 || m2 <= 0) {
-      mostrarAlerta('Con flujo másico activo, ingresa valores numéricos mayores a 0 en ambos campos.');
-      return;
-    }
-    factor = (T1 * m2) / (T2 * m1);
-  } else {
-    factor = T1 / T2;
-  }
-
-  // Mostrar factor
-  sel('factorTag').style.display = 'inline-flex';
-  sel('factorVal').textContent = `Factor = ${factor.toFixed(4)}`;
-
-  // Calcular por zona destino
-  for (let j = 1; j <= M; j++) {
-    let tempFinal = 0, sumaPesos = 0;
+    const entDiv = sel('zonasEntrada');
+    const salDiv = sel('zonasSalida');
+    entDiv.innerHTML = '';
+    salDiv.innerHTML = '';
 
     for (let i = 1; i <= N; i++) {
-      const peso = calcularSolapamiento(i, j, N, M);
-      const tEl = sel(`tempIn${i}`);
-      if (!tEl) continue;
-      const tVal = parseFloat(tEl.value);
-      if (peso > 0 && !isNaN(tVal)) {
-        tempFinal += tVal * peso * factor;
-        sumaPesos += peso;
-      }
+        const phHorno = getGaussPlaceholder(i, N, 150, 280);
+        const phProd = getProdPlaceholder(i, N, 30, 95);
+
+        const row = `
+            <div class="zona-row">
+                <span class="zona-label">Zona ${i}</span>
+                <div class="zona-input-group">
+                    <span class="sub-label">Horno [°C]</span>
+                    <input type="number" id="tempIn${i}" placeholder="Ej: ${phHorno}" value="${historialValores[`tempIn${i}`] || ''}" oninput="guardarInput('tempIn${i}', this.value)">
+                </div>
+                <div class="zona-input-group" style="display:${esNewton?'flex':'none'}">
+                    <span class="sub-label">Temp. Prod [°C]</span>
+                    <input type="number" id="intSal${i}" placeholder="Ej: ${phProd}" value="${historialValores[`intSal${i}`] || ''}" oninput="guardarInput('intSal${i}', this.value)">
+                </div>
+            </div>`;
+        entDiv.innerHTML += row;
     }
 
-    const outEl = sel(`tempOut${j}`);
-    if (sumaPesos > 0) {
-      const resultado = tempFinal / sumaPesos;
-      outEl.textContent = resultado.toFixed(1) + ' °C';
-      outEl.classList.remove('empty');
-    } else {
-      outEl.textContent = '—';
-      outEl.classList.add('empty');
+    for (let j = 1; j <= effectiveM; j++) {
+        salDiv.innerHTML += `
+            <div class="zona-row">
+                <span class="zona-label">Zona ${j}</span>
+                <div class="zona-input-group" style="grid-column: span 2;">
+                    <span class="sub-label">Temp. Zona Rec. [°C]</span>
+                    <div class="zona-result-container">
+                        <div class="zona-result empty" id="tempOut${j}">—</div>
+                        <div class="k-value" id="kOut${j}" style="display:${esNewton?'block':'none'}"></div>
+                    </div>
+                </div>
+            </div>`;
     }
-  }
 }
 
-// ─── BORRAR ──────────────────────────────────────────────────────────────────
+function toggleNewton() {
+    const esNewton = sel('checkNewton').checked;
+    sel('newtonInfo').style.display = esNewton ? 'block' : 'none';
+    sel('newtonInitialTemp').style.display = esNewton ? 'flex' : 'none';
+    sel('newtonLabel').classList.toggle('newton-active', esNewton);
+    sel('masaToggleContainer').style.opacity = esNewton ? '0.3' : '1';
+    sel('masaToggleContainer').style.pointerEvents = esNewton ? 'none' : 'auto';
+    sel('zonas2Row').style.display = esNewton ? 'none' : 'flex';
+    sel('btnCalcular').classList.toggle('newton-btn', esNewton);
+    actualizarZonas();
+}
+
+function toggleMasa() {
+    sel('masaInputs').classList.toggle('visible', sel('checkMasa').checked);
+}
+
+// ─── ALGORITMOS DE CÁLCULO ───────────────────────────────────────────────────
+
+function calcular() {
+    sel('alertMsg').classList.remove('visible');
+    const T1 = parseFloat(sel('tiempo1').value);
+    const T2 = parseFloat(sel('tiempo2').value);
+    const N  = parseInt(sel('zonas1').value);
+
+    if (isNaN(T1) || T1 <= 0 || isNaN(T2) || T2 <= 0) {
+        mostrarAlerta('Verifica los tiempos de horneo.');
+        return;
+    }
+
+    if (sel('checkNewton').checked) {
+        const tInicial = parseFloat(sel('tempInicialProd').value);
+        if(isNaN(tInicial)) { mostrarAlerta('Falta temp. inicial del producto.'); return; }
+        ejecutarNewton(T1, T2, N, tInicial);
+    } else {
+        ejecutarEstandar(T1, T2, N, parseInt(sel('zonas2').value));
+    }
+}
+
+function ejecutarNewton(T1, T2, N, tInicial) {
+    const t_res1 = T1 / N; 
+    const t_res2 = T2 / N; 
+    let prevTempSalida = tInicial;
+
+    for (let i = 1; i <= N; i++) {
+        const T_horno_orig = parseFloat(sel(`tempIn${i}`).value);
+        const T_prod_salida_orig = parseFloat(sel(`intSal${i}`).value);
+        const T_prod_entrada = prevTempSalida;
+        const outEl = sel(`tempOut${i}`);
+        const kEl = sel(`kOut${i}`);
+
+        if (isNaN(T_horno_orig) || isNaN(T_prod_salida_orig)) {
+            outEl.textContent = 'Faltan datos';
+            continue;
+        }
+
+        const numK = T_horno_orig - T_prod_entrada;
+        const denK = T_horno_orig - T_prod_salida_orig;
+        
+        if (denK <= 0 || numK <= 0) {
+            outEl.textContent = 'Error Log';
+            continue;
+        }
+
+        const k = (1 / t_res1) * Math.log(numK / denK);
+
+        const expTerm = Math.exp(-k * t_res2);
+        const Th_recomendada = (T_prod_salida_orig - T_prod_entrada * expTerm) / (1 - expTerm);
+        
+        outEl.textContent = Th_recomendada.toFixed(1) + ' °C';
+        outEl.classList.remove('empty');
+        kEl.textContent = `K = ${k.toFixed(5)} s⁻¹`;
+        
+        prevTempSalida = T_prod_salida_orig; 
+    }
+}
+
+function ejecutarEstandar(T1, T2, N, M) {
+    let factor = T1 / T2;
+    if (sel('checkMasa').checked) {
+        const m1 = parseFloat(sel('masa1').value);
+        const m2 = parseFloat(sel('masa2').value);
+        if (!isNaN(m1) && !isNaN(m2)) factor = (T1 * m2) / (T2 * m1);
+    }
+
+    for (let j = 1; j <= M; j++) {
+        let tempSum = 0, weightSum = 0;
+        const start_j = (j - 1) / M, end_j = j / M;
+
+        for (let i = 1; i <= N; i++) {
+            const start_i = (i - 1) / N, end_i = i / N;
+            const overlap = Math.max(0, Math.min(end_j, end_i) - Math.max(start_j, start_i));
+            const weight = overlap / (1 / M);
+            const tVal = parseFloat(sel(`tempIn${i}`).value);
+            if (weight > 0 && !isNaN(tVal)) {
+                tempSum += tVal * weight * factor;
+                weightSum += weight;
+            }
+        }
+        const outEl = sel(`tempOut${j}`);
+        outEl.textContent = weightSum > 0 ? (tempSum / weightSum).toFixed(1) + ' °C' : '—';
+        outEl.classList.toggle('empty', weightSum <= 0);
+        if(sel(`kOut${j}`)) sel(`kOut${j}`).textContent = '';
+    }
+}
+
 function borrarTodo() {
-  sel('tiempo1').value = '';
-  sel('tiempo2').value = '';
-  sel('zonas1').value  = '';
-  sel('zonas2').value  = '';
-  sel('checkMasa').checked = false;
-  sel('masaInputs').classList.remove('visible');
-  sel('masa1').value = '';
-  sel('masa2').value = '';
-  sel('factorTag').style.display = 'none';
-  sel('alertMsg').classList.remove('visible');
-  sel('zonasEntrada').innerHTML = '';
-  sel('zonasSalida').innerHTML  = '';
+    historialValores = {};
+    sel('tiempo1').value = '';
+    sel('tiempo2').value = '';
+    sel('tempInicialProd').value = '';
+    actualizarZonas();
 }
 
 function mostrarAlerta(msg) {
-  const el = sel('alertMsg');
-  el.textContent = '⚠ ' + msg;
-  el.classList.add('visible');
+    const el = sel('alertMsg');
+    el.textContent = '⚠ ' + msg;
+    el.classList.add('visible');
 }
 </script>
 </body>
