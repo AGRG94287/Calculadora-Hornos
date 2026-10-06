@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Extrapolar Perfiles de Horneo - Newton</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --bg: #0d1117;
@@ -307,6 +308,16 @@
   .btn-primary.newton-btn { background: var(--blue); }
   .btn-danger { background: rgba(248,81,73,0.1); color: var(--red); border: 1px solid var(--red); }
   .btn-danger:hover { background: var(--red); color: white; }
+  
+  .btn-secondary {
+    background: rgba(88, 166, 255, 0.1);
+    color: var(--blue);
+    border: 1px solid var(--blue);
+  }
+  .btn-secondary:hover {
+    background: var(--blue);
+    color: #fff;
+  }
 
   .alert {
     display: none;
@@ -412,6 +423,7 @@
   </div>
 
   <div class="buttons-row">
+    <button class="btn btn-secondary" id="btnDescargar" onclick="descargarComoImagen()">📷 Descargar Imagen</button>
     <button class="btn btn-danger" onclick="borrarTodo()">Borrar Todo</button>
     <button class="btn btn-primary" id="btnCalcular" onclick="calcular()">🔥 Calcular Perfil</button>
   </div>
@@ -595,7 +607,7 @@ function ejecutarEstandar(T1, T2, N, M) {
 }
 
 function borrarTodo() {
-    historialValores = {};
+    historialValores = {}; 
     sel('tiempo1').value = '';
     sel('tiempo2').value = '';
     sel('tempInicialProd').value = '';
@@ -606,6 +618,46 @@ function mostrarAlerta(msg) {
     const el = sel('alertMsg');
     el.textContent = '⚠ ' + msg;
     el.classList.add('visible');
+}
+
+function descargarComoImagen() {
+    const btn = sel('btnDescargar');
+    const origText = btn.textContent;
+    btn.textContent = '⏳ Capturando...';
+    btn.disabled = true;
+
+    // Ejecución de html2canvas asegurando sincronización de inputs en el clon
+    html2canvas(document.body, {
+        backgroundColor: '#0d1117',
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        onclone: (clonedDoc) => {
+            const origInputs = document.querySelectorAll('input');
+            const clonedInputs = clonedDoc.querySelectorAll('input');
+            origInputs.forEach((inp, idx) => {
+                if (clonedInputs[idx]) {
+                    if (inp.type === 'checkbox') {
+                        clonedInputs[idx].checked = inp.checked;
+                    } else {
+                        clonedInputs[idx].setAttribute('value', inp.value);
+                        clonedInputs[idx].value = inp.value;
+                    }
+                }
+            });
+        }
+    }).then(canvas => {
+        const link = document.createElement('a');
+        const fecha = new Date().toISOString().slice(0, 10);
+        link.download = `perfil_horneo_${fecha}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    }).catch(err => {
+        mostrarAlerta('Ocurrió un error al generar la imagen.');
+    }).finally(() => {
+        btn.textContent = origText;
+        btn.disabled = false;
+    });
 }
 </script>
 </body>
